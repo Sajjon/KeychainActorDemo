@@ -9,22 +9,32 @@ import XCTest
 import KeychainAccess
 
 let testKey = "testKey"
+
 extension KeychainActor {
 	
+	func set(data: Data = .random()) async throws {
+		try await KeychainActor.shared.setDataWithoutAuth(
+			.init(
+				data: data,
+				key: testKey,
+				iCloudSyncEnabled: false,
+				accessibility: .always,
+				label: nil, comment: nil
+			)
+		)
+	}
+	
+	func doGet() async throws -> Data? {
+		try await KeychainActor.shared.getDataWithoutAuth(forKey: testKey)
+	}
+	
+	@discardableResult
 	func doTest() async throws -> Data {
-		if let value = try await KeychainActor.shared.getDataWithoutAuth(forKey: testKey) {
+		if let value = try await doGet() {
 			return value
 		} else {
-			let new = Data.random(byteCount: 16)
-			try await KeychainActor.shared.setDataWithoutAuth(
-				.init(
-					data: new,
-					key: testKey,
-					iCloudSyncEnabled: false,
-					accessibility: .always,
-					label: nil, comment: nil
-				)
-			)
+			let new = Data.random()
+			try await set(data: new)
 			return new
 		}
 	}
@@ -38,47 +48,56 @@ final class ApaTests: XCTestCase {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t1 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t2 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t3 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t4 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t5 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t6 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t7 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t8 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		
+		try await sut.doTest()
+		await Task.yield()
 		let t9 = Task {
 			try await sut.doTest()
 		}

@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data {
-	static func random(byteCount: Int) -> Data {
+	static func random(byteCount: Int = 16) -> Data {
 		var randomNumberGenerator = SecRandomNumberGenerator()
 		return Data((0 ..< byteCount).map { _ in UInt8.random(in: UInt8.min ... UInt8.max, using: &randomNumberGenerator) })
 	}
