@@ -14,6 +14,7 @@
 		4816EB192AD1A23700B97108 /* KeychainActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB142AD09D2300B97108 /* KeychainActor.swift */; };
 		4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */; };
 		4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0F2AD09C8300B97108 /* Data+Random.swift */; };
+		4816EB202AD1A5D300B97108 /* ManyTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB1F2AD1A5D300B97108 /* ManyTasks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,8 @@
 		4816EB0F2AD09C8300B97108 /* Data+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Random.swift"; sourceTree = "<group>"; };
 		4816EB142AD09D2300B97108 /* KeychainActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainActor.swift; sourceTree = "<group>"; };
 		4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAttributes.swift; sourceTree = "<group>"; };
+		4816EB1E2AD1A5AA00B97108 /* KeychainTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeychainTests.xctestplan; sourceTree = SOURCE_ROOT; };
+		4816EB1F2AD1A5D300B97108 /* ManyTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManyTasks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,10 +81,8 @@
 		4816EAFC2AD09B4100B97108 /* KeychainDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4816EB1D2AD1A38500B97108 /* DemoApp */,
 				4816EB1A2AD1A23B00B97108 /* Sources */,
-				4816EAFD2AD09B4100B97108 /* Assets.xcassets */,
-				4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */,
-				4816EB012AD09B4100B97108 /* DummyHost.entitlements */,
 			);
 			path = KeychainDemo;
 			sourceTree = "<group>";
@@ -90,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				4816EB092AD09B5000B97108 /* Test.swift */,
+				4816EB1E2AD1A5AA00B97108 /* KeychainTests.xctestplan */,
 			);
 			path = KeychainDemoTests;
 			sourceTree = "<group>";
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				4816EB0F2AD09C8300B97108 /* Data+Random.swift */,
+				4816EB1F2AD1A5D300B97108 /* ManyTasks.swift */,
 			);
 			path = Extra;
 			sourceTree = "<group>";
@@ -118,6 +121,16 @@
 				4816EB142AD09D2300B97108 /* KeychainActor.swift */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		4816EB1D2AD1A38500B97108 /* DemoApp */ = {
+			isa = PBXGroup;
+			children = (
+				4816EAFD2AD09B4100B97108 /* Assets.xcassets */,
+				4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */,
+				4816EB012AD09B4100B97108 /* DummyHost.entitlements */,
+			);
+			path = DemoApp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -226,6 +239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4816EB052AD09B4100B97108 /* DummyHostApp.swift in Sources */,
+				4816EB202AD1A5D300B97108 /* ManyTasks.swift in Sources */,
 				4816EB192AD1A23700B97108 /* KeychainActor.swift in Sources */,
 				4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */,
 				4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */,
@@ -370,7 +384,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = KeychainDemo/DummyHost.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KeychainDemo/DemoApp/DummyHost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -405,7 +419,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = KeychainDemo/DummyHost.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KeychainDemo/DemoApp/DummyHost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;

@@ -11,7 +11,8 @@ import SwiftUI
 struct ApaApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("DummyApp")
+            Text("Demo")
         }
     }
 }
+

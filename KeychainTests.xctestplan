@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1EDE2060-0931-46C3-8677-A366AE6D02EC",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:KeychainDemo.xcodeproj",
+        "identifier" : "480D877E2AD091EE00BDB7E0",
+        "name" : "KeychainDemoTests"
+      }
+    }
+  ],
+  "version" : 1
+}
