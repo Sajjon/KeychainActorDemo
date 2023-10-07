@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 enum Status: Equatable {
+	case new
 	case initializing
 	case initialized
 	case failedToInitialize(String)
@@ -20,21 +21,37 @@ enum Status: Equatable {
 
 struct ContentView: View {
 	let sut = KeychainActor.shared
-	@State var status: Status = .initializing
+	@State var status: Status = .new
 	var body: some View {
-		VStack {
+		VStack(alignment: .center) {
 			StatusView(status: status)
-			Button("Test") {
-				Task {
-					await doTest()
+			
+			if status.canTest {
+				
+				Button("Test") {
+					Task {
+						await doTest()
+					}
+				}
+			} else {
+				Button("Re-initialize") {
+					Task {
+						await initialize()
+					}
 				}
 			}
-		}.task {
+			
+		}
+		.buttonStyle(.borderedProminent)
+		.font(.title)
+		.padding()
+		.task {
 			await initialize()
 		}
 	}
 	
 	private func initialize() async {
+		status = .initializing
 		do {
 			try await sut.removeAllItems()
 			status = .initialized
@@ -66,18 +83,28 @@ struct StatusView: View {
 	var body: some View {
 		HStack {
 			Circle().fill(status.color)
-				.frame(width: 20, height: 20)
-			Text(status.description)
+				.frame(width: 30, height: 30)
+			Text("`\(status.description)`")
+			Spacer(minLength: 0)
 		}
 	}
 }
 
 extension Status {
+	
+	var canTest: Bool {
+		switch self {
+		case .initialized: return true
+		default: return false
+		}
+	}
+	
 	var description: String {
 		switch self {
-		case .initializing: return "initializing"
+		case .new: return "New"
+		case .initializing: return "Initializing"
 		case let .failedToInitialize(error): return "Failed to initialize \(error)"
-		case .initialized: return "initialized"
+		case .initialized: return "Initialized"
 		case let .error(error): return "Error: \(error)"
 		case .finishedSuccessfully: return "Success"
 		case let .finishedWithFailure(failure): return "Failed: \(failure)"
@@ -85,6 +112,7 @@ extension Status {
 	}
 	var color: Color {
 		switch self {
+		case .new: return .gray
 		case .initializing: return .yellow
 		case .failedToInitialize: return .red
 		case .initialized: return .blue
