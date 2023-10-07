@@ -15,6 +15,8 @@
 		4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */; };
 		4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0F2AD09C8300B97108 /* Data+Random.swift */; };
 		4816EB202AD1A5D300B97108 /* ManyTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB1F2AD1A5D300B97108 /* ManyTasks.swift */; };
+		4816EB222AD1A61800B97108 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB212AD1A61800B97108 /* ContentView.swift */; };
+		4816EB242AD1A6E100B97108 /* KeychainActor+RandomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB232AD1A6E100B97108 /* KeychainActor+RandomData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +41,8 @@
 		4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAttributes.swift; sourceTree = "<group>"; };
 		4816EB1E2AD1A5AA00B97108 /* KeychainTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = KeychainTests.xctestplan; sourceTree = SOURCE_ROOT; };
 		4816EB1F2AD1A5D300B97108 /* ManyTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManyTasks.swift; sourceTree = "<group>"; };
+		4816EB212AD1A61800B97108 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4816EB232AD1A6E100B97108 /* KeychainActor+RandomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeychainActor+RandomData.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +123,7 @@
 				4816EB122AD09D0100B97108 /* Extra */,
 				4816EB162AD19FA100B97108 /* KeychainExtensions */,
 				4816EB142AD09D2300B97108 /* KeychainActor.swift */,
+				4816EB232AD1A6E100B97108 /* KeychainActor+RandomData.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -129,6 +134,7 @@
 				4816EAFD2AD09B4100B97108 /* Assets.xcassets */,
 				4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */,
 				4816EB012AD09B4100B97108 /* DummyHost.entitlements */,
+				4816EB212AD1A61800B97108 /* ContentView.swift */,
 			);
 			path = DemoApp;
 			sourceTree = "<group>";
@@ -240,6 +246,8 @@
 			files = (
 				4816EB052AD09B4100B97108 /* DummyHostApp.swift in Sources */,
 				4816EB202AD1A5D300B97108 /* ManyTasks.swift in Sources */,
+				4816EB242AD1A6E100B97108 /* KeychainActor+RandomData.swift in Sources */,
+				4816EB222AD1A61800B97108 /* ContentView.swift in Sources */,
 				4816EB192AD1A23700B97108 /* KeychainActor.swift in Sources */,
 				4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */,
 				4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */,
