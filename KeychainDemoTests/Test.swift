@@ -7,6 +7,7 @@
 
 import XCTest
 import KeychainAccess
+@testable import DummyHost
 
 let testKey = "testKey"
 

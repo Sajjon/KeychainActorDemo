@@ -11,9 +11,9 @@
 		4816EB042AD09B4100B97108 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4816EAFD2AD09B4100B97108 /* Assets.xcassets */; };
 		4816EB052AD09B4100B97108 /* DummyHostApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */; };
 		4816EB0A2AD09B5000B97108 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB092AD09B5000B97108 /* Test.swift */; };
-		4816EB102AD09C8300B97108 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0F2AD09C8300B97108 /* Data+Random.swift */; };
-		4816EB152AD09D2300B97108 /* KeychainActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB142AD09D2300B97108 /* KeychainActor.swift */; };
-		4816EB182AD19FBC00B97108 /* KeychainAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */; };
+		4816EB192AD1A23700B97108 /* KeychainActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB142AD09D2300B97108 /* KeychainActor.swift */; };
+		4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */; };
+		4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0F2AD09C8300B97108 /* Data+Random.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +78,7 @@
 		4816EAFC2AD09B4100B97108 /* KeychainDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4816EB1A2AD1A23B00B97108 /* Sources */,
 				4816EAFD2AD09B4100B97108 /* Assets.xcassets */,
 				4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */,
 				4816EB012AD09B4100B97108 /* DummyHost.entitlements */,
@@ -88,9 +89,7 @@
 		4816EB082AD09B5000B97108 /* KeychainDemoTests */ = {
 			isa = PBXGroup;
 			children = (
-				4816EB142AD09D2300B97108 /* KeychainActor.swift */,
 				4816EB092AD09B5000B97108 /* Test.swift */,
-				4816EB122AD09D0100B97108 /* Extra */,
 			);
 			path = KeychainDemoTests;
 			sourceTree = "<group>";
@@ -98,7 +97,6 @@
 		4816EB122AD09D0100B97108 /* Extra */ = {
 			isa = PBXGroup;
 			children = (
-				4816EB162AD19FA100B97108 /* KeychainExtensions */,
 				4816EB0F2AD09C8300B97108 /* Data+Random.swift */,
 			);
 			path = Extra;
@@ -110,6 +108,16 @@
 				4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */,
 			);
 			path = KeychainExtensions;
+			sourceTree = "<group>";
+		};
+		4816EB1A2AD1A23B00B97108 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4816EB122AD09D0100B97108 /* Extra */,
+				4816EB162AD19FA100B97108 /* KeychainExtensions */,
+				4816EB142AD09D2300B97108 /* KeychainActor.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +226,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4816EB052AD09B4100B97108 /* DummyHostApp.swift in Sources */,
+				4816EB192AD1A23700B97108 /* KeychainActor.swift in Sources */,
+				4816EB1C2AD1A2A600B97108 /* Data+Random.swift in Sources */,
+				4816EB1B2AD1A29F00B97108 /* KeychainAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,9 +237,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4816EB0A2AD09B5000B97108 /* Test.swift in Sources */,
-				4816EB102AD09C8300B97108 /* Data+Random.swift in Sources */,
-				4816EB182AD19FBC00B97108 /* KeychainAttributes.swift in Sources */,
-				4816EB152AD09D2300B97108 /* KeychainActor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
