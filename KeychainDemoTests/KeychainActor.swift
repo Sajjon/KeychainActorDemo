@@ -1,47 +1,32 @@
 import Foundation
 import KeychainAccess
 
-extension Keychain {
-	func withAttributes(
-		accessibility: Accessibility,
-		isSynchronizable: Bool,
-		authenticationPolicy: AuthenticationPolicy?,
-		label: String?,
-		comment: String?
-	) -> Keychain {
-		var modified = synchronizable(isSynchronizable)
-		if let label {
-			modified = modified.label(label)
-		}
-		if let comment {
-			modified = modified.comment(comment)
-		}
-		if let authenticationPolicy {
-			modified = modified.accessibility(accessibility, authenticationPolicy: authenticationPolicy)
-		} else {
-			modified = modified.accessibility(accessibility)
-		}
-		return modified
-	}
-}
-
-final actor KeychainActor: GlobalActor {
-	static let shared = KeychainActor()
+public final actor KeychainActor: GlobalActor {
+	
 	private let keychain: Keychain
+	
+	private let backgroundQueue = DispatchQueue(
+		label: "KeychainActor",
+		qos: .background,
+		attributes: .init(),
+		autoreleaseFrequency: .never,
+		target: nil
+	)
+	
 	private init() {
 		self.keychain = Keychain(service: "MyService")
 	}
 }
 
+// MARK: Public
 extension KeychainActor {
 	
-	private func sync<T>(
-		_ work: @escaping () throws -> T
-	) async throws -> T {
-		//		try await Task {
-		try work()
-		//		}.value
-	}
+	public static let shared = KeychainActor()
+	
+	public typealias Key = Keychain.Key
+	public typealias Label = Keychain.Label
+	public typealias Comment = Keychain.Comment
+	public typealias AuthenticationPrompt = Keychain.AuthenticationPrompt
 }
 
 // MARK: API - No Auth
@@ -49,67 +34,112 @@ extension KeychainActor {
 	func setDataWithoutAuth(
 		data: Data,
 		forKey key: Key,
-		accessibility: Accessibility,
-		isSynchronizable: Bool = false,
-		label: String? = nil,
-		comment: String? = nil
+		with attributes: _KeychainAttributes
 	) async throws {
-		try await sync {
-			try self.keychain
-				.withAttributes(
-					accessibility: accessibility,
-					isSynchronizable: isSynchronizable,
-					authenticationPolicy: nil,
-					label: label,
-					comment: comment
-				)
-				.set(data, key: key)
-		}
+		try await _setData(data, forKey: key, with: attributes)
+	}
+	
+	func setDataWithoutAuth(
+		data: Data,
+		forKey key: Key,
+		label: String? = nil,
+		comment: String? = nil,
+		isSynchronizable: Bool = false,
+		accessibility: Accessibility
+	) async throws {
+		try await setDataWithoutAuth(
+			data: data,
+			forKey: key,
+			with: Keychain.AttributesWithoutAuth(
+				label: label,
+				comment: comment,
+				isSynchronizable: isSynchronizable,
+				accessibility: accessibility
+			)
+		)
 	}
 	
 	func getDataWithoutAuth(
 		forKey key: Key
 	) async throws -> Data? {
-		try await sync {
-			try self.keychain.getData(key)
-		}
+		try await _getData(forKey: key, authenticationPrompt: nil)
 	}
 	
 }
 
 // MARK: API - Auth
 extension KeychainActor {
-	func setDataWithAuthForKey(
-		data: Data,
+	
+	func authenticatedSetData(
+		_ data: Data,
 		forKey key: Key,
-		accessibility: Accessibility,
-		authenticationPolicy: AuthenticationPolicy,
-		isSynchronizable: Bool = false,
-		label: String? = nil,
-		comment: String? = nil
+		with attributes: Keychain.AttributesWithAuth
 	) async throws {
-		try await sync {
-			try self.keychain
-				.withAttributes(
-					accessibility: accessibility,
-					isSynchronizable: isSynchronizable,
-					authenticationPolicy: authenticationPolicy,
-					label: label,
-					comment: comment
-				)
-				.set(data, key: key)
-		}
+		try await _setData(data, forKey: key, with: attributes)
 	}
 	
-	func getDataWithAuthForKey(
+	/// Just an alias for `authenticatedSetData:forKey:with`
+	func setDataWithAuth(
+		data: Data,
 		forKey key: Key,
-		authPrompt: AuthenticationPrompt
+		with attributes: Keychain.AttributesWithAuth
+	) async throws {
+		try await authenticatedSetData(data, forKey: key, with: attributes)
+	}
+	
+	/// Just an alias for
+	/// `authenticatedSetData:forKey:with: KeychainAttributesWithAuth(label: label, ...)`
+	func authenticatedSetData(
+		_ data: Data,
+		forKey key: Key,
+		label: String? = nil,
+		comment: String? = nil,
+		isSynchronizable: Bool = false,
+		accessibility: Accessibility,
+		authenticationPolicy: AuthenticationPolicy
+	) async throws {
+		try await setDataWithAuth(
+			data: data,
+			forKey: key,
+			with: Keychain.AttributesWithAuth(
+				label: label,
+				comment: comment,
+				isSynchronizable: isSynchronizable,
+				accessibility: accessibility,
+				authenticationPolicy: authenticationPolicy
+			)
+		)
+	}
+	
+	/// Just an alias for
+	/// `authenticatedSetData:forKey:with: KeychainAttributesWithAuth(label: label, ...)`
+	func setDataWithAuth(
+		data: Data,
+		forKey key: Key,
+		label: String? = nil,
+		comment: String? = nil,
+		isSynchronizable: Bool = false,
+		accessibility: Accessibility,
+		authenticationPolicy: AuthenticationPolicy
+	) async throws {
+		try await setDataWithAuth(
+			data: data,
+			forKey: key,
+			with: Keychain.AttributesWithAuth(
+				label: label,
+				comment: comment,
+				isSynchronizable: isSynchronizable,
+				accessibility: accessibility,
+				authenticationPolicy: authenticationPolicy
+			)
+		)
+	}
+	
+	func getDataWithAuth(
+		forKey key: Key,
+		authenticationPrompt: AuthenticationPrompt
 	) async throws -> Data? {
-		try await sync {
-			try self.keychain
-				.authenticationPrompt(authPrompt)
-				.getData(key)
-		}
+		try await _getData(forKey: key, authenticationPrompt: authenticationPrompt)
 	}
 	
 }
@@ -117,17 +147,81 @@ extension KeychainActor {
 // MARK: API - Remove
 extension KeychainActor {
 	func removeData(
-		forKey key: Key
+		forKey key: Key,
+		ignoringAttributeSynchronizable: Bool = true
 	) async throws {
-		try await sync {
-			try self.keychain.remove(key)
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue {
+				continuation.resume(
+					returning: try $0
+						.remove(
+							key,
+							ignoringAttributeSynchronizable: ignoringAttributeSynchronizable
+						)
+				)
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
 		}
 	}
 	
 	func removeAllItems() async throws {
-		try await sync {
-			try self.keychain.removeAll()
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue {
+				continuation.resume(
+					returning: try $0.removeAll()
+				)
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
 		}
 	}
 }
 
+// MARK: Private
+extension KeychainActor {
+	
+	private func __onBackgroundQueue(
+		modifier: Keychain.Modifier? = nil,
+		_ work: @escaping @Sendable (Keychain) throws -> Void,
+		onError: @escaping @Sendable (Error) -> Void
+	) -> Void {
+		backgroundQueue.asyncAndWait {
+			do {
+				try work(
+					self.keychain.modifier(modifier)
+				)
+			} catch {
+				onError(error)
+			}
+		}
+	}
+	
+	private func _setData(
+		_ data: Data,
+		forKey key: Key,
+		with attributes: _KeychainAttributes
+	) async throws -> Void {
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue(modifier: .init(attributes: attributes)) {
+				try $0.set(data, key: key)
+				continuation.resume()
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+	}
+	
+	private func _getData(
+		forKey key: Key,
+		authenticationPrompt: AuthenticationPrompt?
+	) async throws -> Data? {
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue(modifier: .init(authPrompt: authenticationPrompt)) {
+				continuation.resume(returning: try $0.getData(key))
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+	}
+}

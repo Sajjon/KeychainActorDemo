@@ -13,18 +13,16 @@ let testKey = "testKey"
 extension KeychainActor {
 	
 	func set(data: Data = .random()) async throws {
-		try await KeychainActor.shared.setDataWithAuthForKey(
-			data: data,
+		try await KeychainActor.shared.authenticatedSetData(
+			data,
 			forKey: testKey,
-			accessibility: .always,
-			authenticationPolicy: .userPresence,
-			isSynchronizable: false,
-			label: nil, comment: nil
+			accessibility: .whenUnlocked,
+			authenticationPolicy: .userPresence
 		)
 	}
 	
 	func doGet() async throws -> Data? {
-		try await KeychainActor.shared.getDataWithAuthForKey(forKey: testKey, authPrompt: "test")
+		try await KeychainActor.shared.getDataWithAuth(forKey: testKey, authenticationPrompt: "test")
 	}
 	
 	@discardableResult

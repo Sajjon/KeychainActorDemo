@@ -11,10 +11,9 @@
 		4816EB042AD09B4100B97108 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4816EAFD2AD09B4100B97108 /* Assets.xcassets */; };
 		4816EB052AD09B4100B97108 /* DummyHostApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */; };
 		4816EB0A2AD09B5000B97108 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB092AD09B5000B97108 /* Test.swift */; };
-		4816EB0C2AD09C4E00B97108 /* KeychainClientExtra.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0B2AD09C4E00B97108 /* KeychainClientExtra.swift */; };
-		4816EB0E2AD09C6B00B97108 /* KeychainActor+Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0D2AD09C6B00B97108 /* KeychainActor+Extra.swift */; };
 		4816EB102AD09C8300B97108 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB0F2AD09C8300B97108 /* Data+Random.swift */; };
 		4816EB152AD09D2300B97108 /* KeychainActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB142AD09D2300B97108 /* KeychainActor.swift */; };
+		4816EB182AD19FBC00B97108 /* KeychainAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,10 +33,9 @@
 		4816EAFE2AD09B4100B97108 /* DummyHostApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyHostApp.swift; sourceTree = "<group>"; };
 		4816EB012AD09B4100B97108 /* DummyHost.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DummyHost.entitlements; sourceTree = "<group>"; };
 		4816EB092AD09B5000B97108 /* Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
-		4816EB0B2AD09C4E00B97108 /* KeychainClientExtra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainClientExtra.swift; sourceTree = "<group>"; };
-		4816EB0D2AD09C6B00B97108 /* KeychainActor+Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeychainActor+Extra.swift"; sourceTree = "<group>"; };
 		4816EB0F2AD09C8300B97108 /* Data+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Random.swift"; sourceTree = "<group>"; };
 		4816EB142AD09D2300B97108 /* KeychainActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainActor.swift; sourceTree = "<group>"; };
+		4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,11 +98,18 @@
 		4816EB122AD09D0100B97108 /* Extra */ = {
 			isa = PBXGroup;
 			children = (
-				4816EB0D2AD09C6B00B97108 /* KeychainActor+Extra.swift */,
-				4816EB0B2AD09C4E00B97108 /* KeychainClientExtra.swift */,
+				4816EB162AD19FA100B97108 /* KeychainExtensions */,
 				4816EB0F2AD09C8300B97108 /* Data+Random.swift */,
 			);
 			path = Extra;
+			sourceTree = "<group>";
+		};
+		4816EB162AD19FA100B97108 /* KeychainExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				4816EB172AD19FBC00B97108 /* KeychainAttributes.swift */,
+			);
+			path = KeychainExtensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,9 +227,8 @@
 			files = (
 				4816EB0A2AD09B5000B97108 /* Test.swift in Sources */,
 				4816EB102AD09C8300B97108 /* Data+Random.swift in Sources */,
+				4816EB182AD19FBC00B97108 /* KeychainAttributes.swift in Sources */,
 				4816EB152AD09D2300B97108 /* KeychainActor.swift in Sources */,
-				4816EB0E2AD09C6B00B97108 /* KeychainActor+Extra.swift in Sources */,
-				4816EB0C2AD09C4E00B97108 /* KeychainClientExtra.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
