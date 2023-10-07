@@ -13,19 +13,18 @@ let testKey = "testKey"
 extension KeychainActor {
 	
 	func set(data: Data = .random()) async throws {
-		try await KeychainActor.shared.setDataWithoutAuth(
-			.init(
-				data: data,
-				key: testKey,
-				iCloudSyncEnabled: false,
-				accessibility: .always,
-				label: nil, comment: nil
-			)
+		try await KeychainActor.shared.setDataWithAuthForKey(
+			data: data,
+			forKey: testKey,
+			accessibility: .always,
+			authenticationPolicy: .userPresence,
+			isSynchronizable: false,
+			label: nil, comment: nil
 		)
 	}
 	
 	func doGet() async throws -> Data? {
-		try await KeychainActor.shared.getDataWithoutAuth(forKey: testKey)
+		try await KeychainActor.shared.getDataWithAuthForKey(forKey: testKey, authPrompt: "test")
 	}
 	
 	@discardableResult
@@ -40,21 +39,26 @@ extension KeychainActor {
 	}
 }
 
-final class ApaTests: XCTestCase {
+final class KeychainActorTests: XCTestCase {
 	let sut = KeychainActor.shared
 	
+	@MainActor
 	func test() async throws {
+		try await sut.removeAllItems()
+		let startValue = try await sut.doGet()
+		XCTAssertNil(startValue)
+		
 		let t0 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		try await sut.doTest()
+		await Task.yield()
 		await Task.yield()
 		let t1 = Task {
 			try await sut.doTest()
 		}
 		await Task.yield()
-		try await sut.doTest()
+		await Task.yield()
 		await Task.yield()
 		let t2 = Task {
 			try await sut.doTest()

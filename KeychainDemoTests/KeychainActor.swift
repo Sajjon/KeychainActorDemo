@@ -1,95 +1,132 @@
 import Foundation
 import KeychainAccess
 
+extension Keychain {
+	func withAttributes(
+		accessibility: Accessibility,
+		isSynchronizable: Bool,
+		authenticationPolicy: AuthenticationPolicy?,
+		label: String?,
+		comment: String?
+	) -> Keychain {
+		var modified = synchronizable(isSynchronizable)
+		if let label {
+			modified = modified.label(label)
+		}
+		if let comment {
+			modified = modified.comment(comment)
+		}
+		if let authenticationPolicy {
+			modified = modified.accessibility(accessibility, authenticationPolicy: authenticationPolicy)
+		} else {
+			modified = modified.accessibility(accessibility)
+		}
+		return modified
+	}
+}
+
 final actor KeychainActor: GlobalActor {
 	static let shared = KeychainActor()
 	private let keychain: Keychain
-	private let dispatchQueue = DispatchQueue(label: "keychain.background.queue")
 	private init() {
 		self.keychain = Keychain(service: "MyService")
 	}
 }
 
 extension KeychainActor {
-	private func withAttributes(
-		of request: SetKeychainItemWithRequest
-	) -> Keychain {
-		var handle = keychain.synchronizable(request.iCloudSyncEnabled)
-		if let label = request.label {
-			handle = handle.label(label)
-		}
-		if let comment = request.comment {
-			handle = handle.comment(comment)
-		}
-		return handle
-	}
 	
-	private func background<T>(_ work: () throws -> T) rethrows -> T {
-		try dispatchQueue.sync {
-			try work()
-		}
+	private func sync<T>(
+		_ work: @escaping () throws -> T
+	) async throws -> T {
+		//		try await Task {
+		try work()
+		//		}.value
 	}
 }
 
 // MARK: API - No Auth
 extension KeychainActor {
 	func setDataWithoutAuth(
-		_ request: SetItemWithoutAuthRequest
-	) throws {
-		try background {
-			try withAttributes(of: request)
-				.accessibility(request.accessibility)
-				.set(request.data, key: request.key)
+		data: Data,
+		forKey key: Key,
+		accessibility: Accessibility,
+		isSynchronizable: Bool = false,
+		label: String? = nil,
+		comment: String? = nil
+	) async throws {
+		try await sync {
+			try self.keychain
+				.withAttributes(
+					accessibility: accessibility,
+					isSynchronizable: isSynchronizable,
+					authenticationPolicy: nil,
+					label: label,
+					comment: comment
+				)
+				.set(data, key: key)
+		}
+	}
+	
+	func getDataWithoutAuth(
+		forKey key: Key
+	) async throws -> Data? {
+		try await sync {
+			try self.keychain.getData(key)
+		}
+	}
+	
+}
+
+// MARK: API - Auth
+extension KeychainActor {
+	func setDataWithAuthForKey(
+		data: Data,
+		forKey key: Key,
+		accessibility: Accessibility,
+		authenticationPolicy: AuthenticationPolicy,
+		isSynchronizable: Bool = false,
+		label: String? = nil,
+		comment: String? = nil
+	) async throws {
+		try await sync {
+			try self.keychain
+				.withAttributes(
+					accessibility: accessibility,
+					isSynchronizable: isSynchronizable,
+					authenticationPolicy: authenticationPolicy,
+					label: label,
+					comment: comment
+				)
+				.set(data, key: key)
 		}
 	}
 	
 	func getDataWithAuthForKey(
 		forKey key: Key,
 		authPrompt: AuthenticationPrompt
-	) throws -> Data? {
-		try background {
-			try keychain
+	) async throws -> Data? {
+		try await sync {
+			try self.keychain
 				.authenticationPrompt(authPrompt)
 				.getData(key)
 		}
 	}
-}
-
-// MARK: API - Auth
-extension KeychainActor {
-	func setDataWithAuthForKey(
-		_ request: SetItemWithAuthRequest
-	) throws {
-		try background {
-			try withAttributes(of: request)
-				.accessibility(request.accessibility, authenticationPolicy: request.authenticationPolicy)
-				.set(request.data, key: request.key)
-		}
-	}
 	
-	func getDataWithoutAuth(
-		forKey key: Key
-	) throws -> Data? {
-		try background {
-			try keychain.getData(key)
-		}
-	}
-
 }
 
 // MARK: API - Remove
 extension KeychainActor {
 	func removeData(
 		forKey key: Key
-	) throws {
-		try background {
-			try keychain.remove(key)
+	) async throws {
+		try await sync {
+			try self.keychain.remove(key)
 		}
 	}
 	
-	func removeAllItems() throws {
-		try background {
-			try keychain.removeAll()
+	func removeAllItems() async throws {
+		try await sync {
+			try self.keychain.removeAll()
 		}
 	}
 }
