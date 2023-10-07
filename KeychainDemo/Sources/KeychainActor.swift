@@ -5,14 +5,14 @@ public final actor KeychainActor: GlobalActor {
 	
 	private let keychain: Keychain
 	
-//	private let backgroundQueue = DispatchQueue(
-//		label: "KeychainActor",
-//		qos: .background,
-//		attributes: .init(),
-//		autoreleaseFrequency: .never,
-//		target: nil
-//	)
-//	
+	private let backgroundQueue = DispatchQueue(
+		label: "KeychainActor",
+		qos: .userInteractive,
+		attributes: .init(),
+		autoreleaseFrequency: .never,
+		target: nil
+	)
+	
 	private init() {
 		self.keychain = Keychain(service: "MyService")
 	}
@@ -150,82 +150,82 @@ extension KeychainActor {
 		forKey key: Key,
 		ignoringAttributeSynchronizable: Bool = true
 	) async throws {
-//		try await withCheckedThrowingContinuation { continuation in
-//			__onBackgroundQueue {
-//				continuation.resume(
-//					returning: try $0
-//						.remove(
-//							key,
-//							ignoringAttributeSynchronizable: ignoringAttributeSynchronizable
-//						)
-//				)
-//			} onError: {
-//				continuation.resume(throwing: $0)
-//			}
-//		}
-		try keychain.remove(key, ignoringAttributeSynchronizable: ignoringAttributeSynchronizable)
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue {
+				continuation.resume(
+					returning: try $0
+						.remove(
+							key,
+							ignoringAttributeSynchronizable: ignoringAttributeSynchronizable
+						)
+				)
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+//		try keychain.remove(key, ignoringAttributeSynchronizable: ignoringAttributeSynchronizable)
 	}
 	
 	func removeAllItems() async throws {
-//		try await withCheckedThrowingContinuation { continuation in
-//			__onBackgroundQueue {
-//				continuation.resume(
-//					returning: try $0.removeAll()
-//				)
-//			} onError: {
-//				continuation.resume(throwing: $0)
-//			}
-//		}
-		try keychain.removeAll()
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue {
+				continuation.resume(
+					returning: try $0.removeAll()
+				)
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+//		try keychain.removeAll()
 	}
 }
 
 // MARK: Private
 extension KeychainActor {
 	
-//	private func __onBackgroundQueue(
-//		modifier: Keychain.Modifier? = nil,
-//		_ work: @escaping @Sendable (Keychain) throws -> Void,
-//		onError: @escaping @Sendable (Error) -> Void
-//	) -> Void {
-//		backgroundQueue.asyncAndWait {
-//			do {
-//				try work(
-//					self.keychain.modifier(modifier)
-//				)
-//			} catch {
-//				onError(error)
-//			}
-//		}
-//	}
+	private func __onBackgroundQueue(
+		modifier: Keychain.Modifier? = nil,
+		_ work: @escaping @Sendable (Keychain) throws -> Void,
+		onError: @escaping @Sendable (Error) -> Void
+	) -> Void {
+		backgroundQueue.asyncAndWait {
+			do {
+				try work(
+					self.keychain.modifier(modifier)
+				)
+			} catch {
+				onError(error)
+			}
+		}
+	}
 	
 	private func _setData(
 		_ data: Data,
 		forKey key: Key,
 		with attributes: _KeychainAttributes
 	) async throws -> Void {
-//		try await withCheckedThrowingContinuation { continuation in
-//			__onBackgroundQueue(modifier: .init(attributes: attributes)) {
-//				try $0.set(data, key: key)
-//				continuation.resume()
-//			} onError: {
-//				continuation.resume(throwing: $0)
-//			}
-//		}
-		try self.keychain.modifier(.init(attributes: attributes)).set(data, key: key)
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue(modifier: .init(attributes: attributes)) {
+				try $0.set(data, key: key)
+				continuation.resume()
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+//		try self.keychain.modifier(.init(attributes: attributes)).set(data, key: key)
 	}
 	
 	private func _getData(
 		forKey key: Key,
 		authenticationPrompt: AuthenticationPrompt?
 	) async throws -> Data? {
-//		try await withCheckedThrowingContinuation { continuation in
-//			__onBackgroundQueue(modifier: .init(authPrompt: authenticationPrompt)) {
-//				continuation.resume(returning: try $0.getData(key))
-//			} onError: {
-//				continuation.resume(throwing: $0)
-//			}
-//		}
-		try self.keychain.modifier(.init(authPrompt: authenticationPrompt)).getData(key)
+		try await withCheckedThrowingContinuation { continuation in
+			__onBackgroundQueue(modifier: .init(authPrompt: authenticationPrompt)) {
+				continuation.resume(returning: try $0.getData(key))
+			} onError: {
+				continuation.resume(throwing: $0)
+			}
+		}
+//		try self.keychain.modifier(.init(authPrompt: authenticationPrompt)).getData(key)
 	}
 }

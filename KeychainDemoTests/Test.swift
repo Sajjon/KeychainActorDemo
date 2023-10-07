@@ -12,8 +12,13 @@ import KeychainAccess
 final class KeychainActorTests: XCTestCase {
 	let sut = KeychainActor.shared
 	
-	@MainActor
 	func test() async throws {
+		for _ in 0..<100 {
+			try await onceTest()
+		}
+	}
+	
+	func onceTest() async throws {
 		try await sut.removeAllItems()
 		let startValue = try await sut.getSavedRandomData()
 		XCTAssertNil(startValue)
