@@ -4,8 +4,7 @@ import KeychainAccess
 public final actor KeychainActor: GlobalActor {
 	
 	private let keychain: Keychain
-	private let semaphore = DispatchSemaphore(value: 1)
-	private let queue = DispatchQueue(label: "keychainActor", attributes: .concurrent)
+
 	private init() {
 		self.keychain = Keychain(service: "MyService")
 	}
@@ -95,7 +94,7 @@ extension KeychainActor {
 		with attributes: Keychain.AttributesWithAuth
 	) async throws {
 		try await accessingKeychain {
-//			self.assertIsolated("Should not run keychain operation on MainActor")
+			self.assertIsolated("Should not run keychain operation on MainActor")
 			dispatchPrecondition(condition: .notOnQueue(DispatchQueue.main))
 			return try $0.modifier(.init(attributes: attributes))
 				.set(data, key: key)
@@ -132,7 +131,7 @@ extension KeychainActor {
 		authenticationPrompt: AuthenticationPrompt
 	) async throws -> Data? {
 		try await accessingKeychain {
-//			self.assertIsolated("Should not run keychain operation on MainActor")
+			self.assertIsolated("Should not run keychain operation on MainActor")
 			dispatchPrecondition(condition: .notOnQueue(DispatchQueue.main))
 			return try $0.modifier(.init(authPrompt: authenticationPrompt))
 				.getData(key)
@@ -187,18 +186,6 @@ private extension KeychainActor {
 	func accessingKeychain<T>(
 		_ accessingKeychain: @escaping (Keychain) throws -> T
 	) async throws -> T {
-//		try await withCheckedThrowingContinuation { continuation in
-//			queue.async {
-//				self.semaphore.wait()
-//				do {
-//					let res = try accessingKeychain(self.keychain)
-//					continuation.resume(returning: res)
-//				} catch {
-//					continuation.resume(throwing: error)
-//				}
-//				self.semaphore.signal()
-//			}
-//		}
 		try accessingKeychain(self.keychain)
 	}
 }
