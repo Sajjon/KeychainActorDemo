@@ -68,6 +68,7 @@ struct ContentView: View {
 		}
 	}
 	
+	@MainActor
 	private func doTestAuth() async {
 		await _doTest {
 			try await sut.authGetSavedDataElseSaveNewRandom()
@@ -80,6 +81,7 @@ struct ContentView: View {
 		}
 	}
 	
+	@MainActor
 	private func _doTest(
 		_ task: @escaping @Sendable () async throws -> Data
 	) async {
