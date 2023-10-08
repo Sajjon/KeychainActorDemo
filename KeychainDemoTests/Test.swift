@@ -26,7 +26,7 @@ final class KeychainActorTests: XCTestCase {
 	
 	func onceNoAuthTest() async throws {
 		try await sut.removeAllItems()
-		let startValue = try await sut.noAuthGetSavedRandomData()
+		let startValue = try await sut.getDataWithoutAuth(forKey: noAuthRandomKey)
 		XCTAssertNil(startValue)
 	
 		let values = try await valuesFromManyTasks {
@@ -37,7 +37,7 @@ final class KeychainActorTests: XCTestCase {
 	
 	func onceAuthTest() async throws {
 		try await sut.removeAllItems()
-		let startValue = try await sut.authGetSavedRandomData()
+		let startValue = try await sut.getDataWithAuth(forKey: authRandomKey, authenticationPrompt: "onceAuthTest")
 		XCTAssertNil(startValue)
 	
 		let values = try await valuesFromManyTasks {

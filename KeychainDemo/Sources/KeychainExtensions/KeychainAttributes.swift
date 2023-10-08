@@ -37,6 +37,20 @@ extension Keychain {
 		let accessibility: Accessibility?
 		let authenticationPolicy: AuthenticationPolicy
 		
+		init(
+			label: String? = nil,
+			comment: String? = nil,
+			isSynchronizable: Bool = false,
+			accessibility: Accessibility,
+			authenticationPolicy: AuthenticationPolicy
+		) {
+			self.label = label
+			self.comment = comment
+			self.isSynchronizable = isSynchronizable
+			self.accessibility = accessibility
+			self.authenticationPolicy = authenticationPolicy
+		}
+		
 		var maybeAuthenticationPolicy: AuthenticationPolicy? { authenticationPolicy }
 	}
 	struct AttributesWithoutAuth: _KeychainAttributes {
@@ -44,6 +58,18 @@ extension Keychain {
 		let comment: String?
 		let isSynchronizable: Bool
 		let accessibility: Accessibility?
+		
+		init(
+			label: String? = nil,
+			comment: String? = nil,
+			isSynchronizable: Bool = false,
+			accessibility: Accessibility? = nil
+		) {
+			self.label = label
+			self.comment = comment
+			self.isSynchronizable = isSynchronizable
+			self.accessibility = accessibility
+		}
 		
 		var maybeAuthenticationPolicy: AuthenticationPolicy? { nil }
 	}
