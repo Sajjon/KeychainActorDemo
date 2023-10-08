@@ -8,35 +8,60 @@
 import Foundation
 import KeychainAccess
 
-let randomDataKey = "randomDataKey"
+let authRandomKey = "authRandomDataKey"
+let noAuthRandomKey = "noAuthRandomDataKey"
 
 extension KeychainActor {
 	
-	func setRandomData(
-		_ data: Data = .random()
-	) async throws {
-		try await KeychainActor.shared.authenticatedSetData(
-			data,
-			forKey: randomDataKey,
-			accessibility: .whenUnlocked,
-			authenticationPolicy: .userPresence
-		)
-	}
-	
-	func getSavedRandomData() async throws -> Data? {
+	func authGetSavedRandomData() async throws -> Data?  {
 		try await KeychainActor.shared.getDataWithAuth(
-			forKey: randomDataKey,
-			authenticationPrompt: "random data"
+			forKey: authRandomKey,
+			authenticationPrompt: "auth random data"
 		)
 	}
 	
 	@discardableResult
-	func getSavedDataElseSaveNewRandom() async throws -> Data {
-		if let value = try await getSavedRandomData() {
+	func authGetSavedDataElseSaveNewRandom() async throws -> Data {
+		let key = authRandomKey
+		if let value = try await authGetSavedRandomData() {
+			print("AUTH Found existing value='\(value.hexEncodedString())' for '\(key)'")
 			return value
 		} else {
 			let new = Data.random()
-			try await setRandomData(new)
+			print("AUTH Found no value for '\(key)', saving new: '\(new.hexEncodedString())'")
+			try await KeychainActor.shared.authenticatedSetData(
+				new,
+				forKey: key,
+				accessibility: .whenUnlockedThisDeviceOnly,
+				authenticationPolicy: .biometryAny
+			)
+			return new
+		}
+	}
+}
+
+extension KeychainActor {
+	
+	func noAuthGetSavedRandomData() async throws -> Data? {
+		try await KeychainActor.shared.getDataWithoutAuth(
+			forKey: noAuthRandomKey
+		)
+	}
+	
+	@discardableResult
+	func noAuthGetSavedDataElseSaveNewRandom() async throws -> Data {
+		let key = noAuthRandomKey
+		if let value = try await noAuthGetSavedRandomData() {
+			print("NO AUTH Found existing value='\(value.hexEncodedString())' for '\(key)'")
+			return value
+		} else {
+			let new = Data.random()
+			print("NO AUTH Found no value for '\(key)', saving new: '\(new.hexEncodedString())'")
+			try await KeychainActor.shared.setDataWithoutAuth(
+				data: new,
+				forKey: key,
+				accessibility: .always
+			)
 			return new
 		}
 	}

@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data {
-	static func random(byteCount: Int = 16) -> Data {
+	static func random(byteCount: Int = 8) -> Data {
 		var randomNumberGenerator = SecRandomNumberGenerator()
 		return Data((0 ..< byteCount).map { _ in UInt8.random(in: UInt8.min ... UInt8.max, using: &randomNumberGenerator) })
 	}
@@ -29,3 +29,18 @@ struct SecRandomNumberGenerator: RandomNumberGenerator {
 	}
 }
 
+
+extension Data {
+	public struct HexEncodingOptions: OptionSet {
+		public let rawValue: Int
+		public init(rawValue: Int) {
+			self.rawValue = rawValue
+		}
+		static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
+	}
+
+	public func hexEncodedString(options: HexEncodingOptions = []) -> String {
+		let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
+		return self.map { String(format: format, $0) }.joined()
+	}
+}

@@ -11,7 +11,7 @@ import SwiftUI
 enum Status: Equatable {
 	case new
 	case initializing
-	case initialized
+	case initialized(String)
 	case failedToInitialize(String)
 	
 	case error(String)
@@ -28,9 +28,15 @@ struct ContentView: View {
 			
 			if status.canTest {
 				
-				Button("Test") {
+				Button("Test auth") {
 					Task {
-						await doTest()
+						await doTestAuth()
+					}
+				}
+				
+				Button("Test no auth") {
+					Task {
+						await doTestNoAuth()
 					}
 				}
 			} else {
@@ -54,29 +60,46 @@ struct ContentView: View {
 		status = .initializing
 		do {
 			try await sut.removeAllItems()
-			status = .initialized
+			let noAuth = try await sut.getDataWithoutAuth(forKey: noAuthRandomKey)
+			let auth = try await sut.getDataWithoutAuth(forKey: authRandomKey)
+			status = .initialized("Nil? \(auth == nil)/\(noAuth == nil)")
 		} catch {
 			status = .failedToInitialize("Failed to remove all items in keychain \(error)")
 		}
 	}
 	
-	private func doTest() async {
+	private func doTestAuth() async {
+		await _doTest {
+			try await sut.authGetSavedDataElseSaveNewRandom()
+		}
+	}
+	
+	private func doTestNoAuth() async {
+		await _doTest {
+			try await sut.noAuthGetSavedDataElseSaveNewRandom()
+		}
+	}
+	
+	private func _doTest(
+		_ task: @escaping @Sendable () async throws -> Data
+	) async {
 		do {
-			let result = try await manyTasks {
-				try await sut.getSavedDataElseSaveNewRandom()
+			let values = try await valuesFromManyTasks {
+				try await task()
 			}
-			if result.count == 0 {
+			if values.count == 0 {
 				status = .finishedWithFailure("Zero elements")
-			} else if result.count == 1 {
+			} else if values.count == 1 {
 				status = .finishedSuccessfully
 			} else {
-				status = .finishedWithFailure("#\(result.count) elements")
+				status = .finishedWithFailure("#\(values.count) elements")
 			}
 		} catch {
 			status = .error("\(error)")
 		}
 	}
 }
+
 
 struct StatusView: View {
 	let status: Status
@@ -104,7 +127,7 @@ extension Status {
 		case .new: return "New"
 		case .initializing: return "Initializing"
 		case let .failedToInitialize(error): return "Failed to initialize \(error)"
-		case .initialized: return "Initialized"
+		case let .initialized(info): return "Initialized \(info)"
 		case let .error(error): return "Error: \(error)"
 		case .finishedSuccessfully: return "Success"
 		case let .finishedWithFailure(failure): return "Failed: \(failure)"

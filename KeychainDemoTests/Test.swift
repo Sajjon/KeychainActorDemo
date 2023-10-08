@@ -12,27 +12,37 @@ import KeychainAccess
 final class KeychainActorTests: XCTestCase {
 	let sut = KeychainActor.shared
 	
-	func test() async throws {
+	func testNoAuth() async throws {
 		for _ in 0..<100 {
-			try await onceTest()
+			try await onceNoAuthTest()
 		}
 	}
 	
-	func onceTest() async throws {
+	func testAuth() async throws {
+		for _ in 0..<100 {
+			try await onceAuthTest()
+		}
+	}
+	
+	func onceNoAuthTest() async throws {
 		try await sut.removeAllItems()
-		let startValue = try await sut.getSavedRandomData()
+		let startValue = try await sut.noAuthGetSavedRandomData()
 		XCTAssertNil(startValue)
 	
-		let tasks = try await manyTasks {
-			try await self.sut.getSavedDataElseSaveNewRandom()
-		}
-		
-		var values = Set<Data>()
-		for task in tasks {
-			let value = try await task.value
-			values.insert(value)
+		let values = try await valuesFromManyTasks {
+			try await self.sut.noAuthGetSavedDataElseSaveNewRandom()
 		}
 		XCTAssertEqual(values.count, 1)
 	}
 	
+	func onceAuthTest() async throws {
+		try await sut.removeAllItems()
+		let startValue = try await sut.authGetSavedRandomData()
+		XCTAssertNil(startValue)
+	
+		let values = try await valuesFromManyTasks {
+			try await self.sut.authGetSavedDataElseSaveNewRandom()
+		}
+		XCTAssertEqual(values.count, 1)
+	}
 }

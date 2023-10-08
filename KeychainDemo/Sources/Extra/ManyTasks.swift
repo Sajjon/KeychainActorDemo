@@ -7,9 +7,9 @@
 
 import Foundation
 
-public func manyTasks<T>(
+public func valuesFromManyTasks<T: Hashable>(
 	task: @Sendable @escaping () async throws -> T
-) async rethrows -> [Task<T, any Error>] {
+) async throws -> Set<T> {
 	
 	let t0 = Task {
 		try await task()
@@ -70,5 +70,11 @@ public func manyTasks<T>(
 	}
 	await Task.yield()
 	
-	return [t0, t1, t2, t3, t4, t5, t6, t7, t8, t9]
+	let tasks = [t0, t1, t2, t3, t4, t5, t6, t7, t8, t9]
+	var values = Set<T>()
+	for task in tasks {
+		let value = try await task.value
+		values.insert(value)
+	}
+	return values
 }
