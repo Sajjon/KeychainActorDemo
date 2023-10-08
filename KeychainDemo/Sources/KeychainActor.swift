@@ -67,7 +67,7 @@ extension KeychainActor {
 // MARK: API - Auth
 extension KeychainActor {
 	
-	func authenticatedSetData(
+	func setDataWithAuth(
 		_ data: Data,
 		forKey key: Key,
 		with attributes: Keychain.AttributesWithAuth
@@ -79,18 +79,9 @@ extension KeychainActor {
 			
 	}
 	
-	/// Just an alias for `authenticatedSetData:forKey:with`
-	func setDataWithAuth(
-		data: Data,
-		forKey key: Key,
-		with attributes: Keychain.AttributesWithAuth
-	) throws {
-		try authenticatedSetData(data, forKey: key, with: attributes)
-	}
-	
 	/// Just an alias for
-	/// `authenticatedSetData:forKey:with: KeychainAttributesWithAuth(label: label, ...)`
-	func authenticatedSetData(
+	/// `setDataWithAuth:forKey:with: KeychainAttributesWithAuth(label: label, ...)`
+	func setDataWithAuth(
 		_ data: Data,
 		forKey key: Key,
 		label: String? = nil,
@@ -100,31 +91,7 @@ extension KeychainActor {
 		authenticationPolicy: AuthenticationPolicy
 	) throws {
 		try setDataWithAuth(
-			data: data,
-			forKey: key,
-			with: Keychain.AttributesWithAuth(
-				label: label,
-				comment: comment,
-				isSynchronizable: isSynchronizable,
-				accessibility: accessibility,
-				authenticationPolicy: authenticationPolicy
-			)
-		)
-	}
-	
-	/// Just an alias for
-	/// `authenticatedSetData:forKey:with: KeychainAttributesWithAuth(label: label, ...)`
-	func setDataWithAuth(
-		data: Data,
-		forKey key: Key,
-		label: String? = nil,
-		comment: String? = nil,
-		isSynchronizable: Bool = false,
-		accessibility: Accessibility,
-		authenticationPolicy: AuthenticationPolicy
-	) throws {
-		try setDataWithAuth(
-			data: data,
+			data,
 			forKey: key,
 			with: Keychain.AttributesWithAuth(
 				label: label,

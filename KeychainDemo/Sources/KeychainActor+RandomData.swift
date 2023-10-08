@@ -29,7 +29,7 @@ extension KeychainActor {
 		} else {
 			let new = Data.random()
 			print("AUTH Found no value for '\(key)', saving new: '\(new.hexEncodedString())'")
-			try await KeychainActor.shared.authenticatedSetData(
+			try await KeychainActor.shared.setDataWithAuth(
 				new,
 				forKey: key,
 				accessibility: .whenUnlockedThisDeviceOnly,
