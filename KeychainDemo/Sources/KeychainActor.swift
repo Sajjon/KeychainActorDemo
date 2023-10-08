@@ -3,10 +3,10 @@ import KeychainAccess
 
 public final actor KeychainActor: GlobalActor {
 	
-	private let keychain: ManagedCriticalState<Keychain>
+	private let keychain: Keychain
 	
 	private init() {
-		self.keychain = .init(Keychain(service: "MyService"))
+		self.keychain = Keychain(service: "MyService")
 	}
 }
 
@@ -171,8 +171,8 @@ extension KeychainActor {
 
 private extension KeychainActor {
 	func accessingKeychain<T>(
-		_ accessingKeychain: (inout Keychain) throws -> T
+		_ accessingKeychain: (Keychain) throws -> T
 	) throws -> T {
-		try self.keychain.withCriticalRegion(accessingKeychain)
+		try accessingKeychain(self.keychain)
 	}
 }

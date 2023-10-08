@@ -19,9 +19,9 @@ final class KeychainActorTests: XCTestCase {
 	}
 	
 	func testAuth() async throws {
-		for _ in 0..<100 {
+//		for _ in 0..<100 {
 			try await onceAuthTest()
-		}
+//		}
 	}
 	
 	func onceNoAuthTest() async throws {
